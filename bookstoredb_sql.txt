@@ -1,0 +1,90 @@
+CREATE DATABASE `bookstoredb`;
+
+USE `bookstoredb`;
+
+CREATE TABLE users (
+  user_id serial,
+  email varchar(30) NOT NULL,
+  password varchar(16) NOT NULL,
+  full_name varchar(30) NOT NULL,
+  PRIMARY KEY (user_id),
+  CONSTRAINT user_id_UNIQUE UNIQUE (user_id)
+);
+
+CREATE TABLE category (
+  category_id serial,
+  name varchar(30) NOT NULL,
+  PRIMARY KEY (category_id),
+  CONSTRAINT category_id_UNIQUE UNIQUE (category_id)
+);
+
+CREATE TABLE book (
+  book_id serial,
+  title varchar(128) NOT NULL,
+  author varchar(64) NOT NULL,
+  description text NOT NULL,
+  isbn varchar(15) NOT NULL,
+  image bytea NOT NULL,
+  price float NOT NULL,
+  publish_date date NOT NULL,
+  last_update_time TIMESTAMP NOT NULL,
+  category_id int NOT NULL,
+  PRIMARY KEY(book_id),
+  CONSTRAINT book_id_UNIQUE UNIQUE(book_id),
+  CONSTRAINT title_UNIQUE UNIQUE(title),
+  CONSTRAINT category_fk FOREIGN KEY(category_id) REFERENCES category (category_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE customer (
+  customer_id serial,
+  email varchar(64) NOT NULL,
+  fullname varchar(30) NOT NULL,
+  address varchar(128) NOT NULL,
+  city varchar(32) NOT NULL,
+  country varchar(64) NOT NULL,
+  phone varchar(15) NOT NULL,
+  zipcode varchar(24) NOT NULL,
+  password varchar(16) NOT NULL,
+  register_date TIMESTAMP NOT NULL,
+  PRIMARY KEY(customer_id),
+  CONSTRAINT customer_id_UNIQUE UNIQUE(customer_id),
+  CONSTRAINT email_UNIQUE UNIQUE(email)
+);
+
+CREATE TABLE review (
+  review_id serial,
+  book_id int NOT NULL,
+  customer_id int NOT NULL,
+  rating int  NOT NULL,
+  headline varchar(128) NOT NULL,
+  comment varchar(500) NOT NULL,
+  review_time TIMESTAMP NOT NULL,
+  PRIMARY KEY(review_id),
+  CONSTRAINT review_id_UNIQUE UNIQUE(review_id),
+  CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES book (book_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT customer_fk FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE book_order (
+  order_id serial,
+  customer_id int NOT NULL,
+  order_date TIMESTAMP NOT NULL,
+  shipping_address varchar(256) NOT NULL,
+  recipient_name varchar(30) NOT NULL,
+  recipient_phone varchar(15) NOT NULL,
+  payment_method varchar(20) NOT NULL,
+  total float NOT NULL,
+  status varchar(20) NOT NULL,
+  PRIMARY KEY(order_id),
+  CONSTRAINT order_id_UNIQUE UNIQUE(order_id),
+  CONSTRAINT customer_fk_2 FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE order_detail (
+  order_id int DEFAULT NULL,
+  book_id int DEFAULT NULL,
+  quantity int NOT NULL,
+  subtotal float NOT NULL,
+  CONSTRAINT book_fk_2 FOREIGN KEY (book_id) REFERENCES book (book_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT order_fk FOREIGN KEY (order_id) REFERENCES book_order (order_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);

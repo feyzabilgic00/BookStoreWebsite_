@@ -17,9 +17,9 @@ public class UserDAO extends JpaDAO<Users> implements GenericDAO<Users> {
 		return super.create(user);
 	}
 	@Override
-	public Users update(Users t) {
-		// TODO Auto-generated method stub
-		return null;
+	public Users update(Users user) {
+		
+		return super.update(user);
 	}
 
 	@Override
